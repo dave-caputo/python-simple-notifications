@@ -1,9 +1,10 @@
 import unittest
-from datetime import timedelta
+from datetime import timedelta, datetime
 from unittest.mock import patch
 
-from main import app, db
+from flask import current_app
 
+from app.main import app, db
 from app.models import Notification
 from app.tasks import send_notifications
 
@@ -23,11 +24,25 @@ class BaseTestCase(unittest.TestCase):
         self.app_context.pop()
 
 
-class TestViews(unittest.TestCase):
+class BasicsTestCase(unittest.TestCase):
 
-    def test_get_home_page(self):
+    def test_app_exists(self):
+        self.assertFalse(current_app is None)
+
+    def test_app_is_testing(self):
+        self.assertTrue(current_app.config['TESTING'])
+
+
+class FlaskClientTestCase(BaseTestCase):
+
+    def test_home_page(self):
+        notification = Notification(message='Awesome', frequency=1)
+        db.session.add(notification)
+        db.session.commit()
+
         response = self.client.get('/')
         self.assertEqual(response.status_code, 200)
+        self.assertTrue('Awesome' in response.get_data(as_text=True))
 
     def test_add_notification(self):
         response = self.client.post('/', data={
@@ -37,7 +52,7 @@ class TestViews(unittest.TestCase):
         self.assertEqual(response.status_code, 302)
         notification = Notification.query.filter_by(message='Remind me!').first()
         self.assertIsNotNone(notification)
-        self.assertIsNotNone(notification.delivery_date)
+        self.assertIsInstance(notification.delivery_date, datetime)
 
 
 class TestTasks(unittest.TestCase):
@@ -54,7 +69,3 @@ class TestTasks(unittest.TestCase):
             send_notifications.delay.assert_called_with(Notification)
 
         assert send_notification.called_with(overdue_notification.id)
-
-
-if __name__ == '__main__':
-    unittest.main()
