@@ -1,16 +1,17 @@
-version: '3'
+version: '2.4'
+x-web_common: &web_common
+  build:
+    context: .
+    dockerfile: Dockerfile
+  environment:
+    FLASK_APP: main.py
+    FLASK_ENV: production
+    FLASK_DEBUG: 0
+  volumes:
+    - ./app:/app
 services:
   web:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    environment:
-      FLASK_APP: main.py
-      FLASK_ENV: development
-      FLASK_DEBUG: 1
-      WERKZEUG_DEBUG_PIN: 'off'
-    volumes:
-      - ./app:/app
+    <<: *web_common
     ports:
       - '5000:5000'
     depends_on:
@@ -23,27 +24,14 @@ services:
     ports:
       - '6379:6379'
   celery-worker:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    environment:
-      FLASK_APP: main.py
-      FLASK_ENV: production
-      FLASK_DEBUG: 0
-
+    <<: *web_common
     volumes:
       - ./app:/app
     command: [celery, worker, --app=main.celery_app, --loglevel=INFO, --uid=nobody]
     depends_on:
       - redis
   celery-beat:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    environment:
-      FLASK_APP: main.py
-      FLASK_ENV: production
-      FLASK_DEBUG: 1
+    <<: *web_common
     volumes:
       - ./app:/app
     command: [celery, beat, --app=main.celery_app, --loglevel=INFO]
