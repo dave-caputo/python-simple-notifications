@@ -20,7 +20,7 @@ However, since the objective is to create a 'Simple' service, I opted for Flask 
 * Daily notifications are sent 24 hours after creation date or the last delivery date.
 * Weekly notifications are sent 24 * 7 hours after creation date or the last delivery date.
 * Notifications don't need to be sent at the "exact" planned delivery time.
-   The celery scheduler runs every 2 minutes and to identify and send the notifications that have become due.
+   The celery scheduler runs every minute to identify and send the notifications that have become due.
 
 ## What this app doesn't do
 * The app does not implement a robust html form validation for adding the notifications to the database.
@@ -29,6 +29,7 @@ However, since the objective is to create a 'Simple' service, I opted for Flask 
 specific implementation should be added.
 * This app does not support "users". This would be a more realistic implementation but this one focuses more on
 handling the queued tasks appropriately.
+* Kubernetes not implemented.
 
 ## Key scalability features
 * The app and celery worker are executed in separate containers to allow scaling of one or another depending on the demand.
