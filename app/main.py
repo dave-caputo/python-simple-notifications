@@ -1,11 +1,8 @@
-from datetime import datetime, timezone
-
 from celery import Celery
 from celery.schedules import crontab
 from flask import Flask, render_template, request
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
-from future.backports.datetime import timedelta
 
 app = Flask(__name__)
 
