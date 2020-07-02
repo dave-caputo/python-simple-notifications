@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+<div>
+    <h1>Python Simple Notification Service</h1>
+</div>
+<div>
+    <form action="/" method="post">
+        <label for="message">Notification message:</label>
+        <br>
+        <input type="text" name="message" id="message" placeholder="Enter text...">
+        <br>
+        <br>
+        <label for="frequency">Choose a frequency:</label>
+        <br>
+        <select name="frequency" id="frequency">
+        {% for val, text in frequencies %}
+            <option value="{{ val }}">{{ text }}</option>
+        {% endfor %}}
+        </select>
+        <br>
+        <br>
+        <input type="submit" value="Submit">
+    </form>
+</div>
+<div>
+    <h2>Upcoming notifications</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Delivery date</th>
+                <th>Message</th>
+                <th>Frequency</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for n in notifications %}
+            <tr>
+                <td>{{ n.delivery_date }}</td>
+                <td>{{ n.message }}</td>
+                <td>{{ n.verbose_frequency }}</td>
+            </tr>
+        </tbody>
+        {% endfor %}
+    </table>
+</div>
+</body>
+</html>
