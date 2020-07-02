@@ -1,6 +1,6 @@
 from celery import Celery
 from celery.schedules import crontab
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 
@@ -32,7 +32,6 @@ def service_notifications_view():
     from models import Notification
 
     if request.method == 'POST':
-
         frequency = int(request.form.get('frequency', 1))
         if frequency not in Notification.FREQUENCY_MAPPING:
             frequency = 1
@@ -44,6 +43,8 @@ def service_notifications_view():
         notification.set_or_update_delivery_date()
         db.session.add(notification)
         db.session.commit()
+
+        return redirect(url_for('service_notifications_view'))
 
     context = {
         'notifications': Notification.query.order_by(Notification.delivery_date)[:10],
