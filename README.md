@@ -15,6 +15,18 @@ However, since the objective is to create a 'Simple' service, I opted for Flask 
 * Flask
 * Celery/Redis
 
+## To run this app locally
+Run
+```commandline
+docker-compose up
+```
+Note: To apply the migrations to database, run 
+```commandline
+docker-compose run --rm web flask db upgrade
+```
+
+Load the page on your browser: http://127.0.0.1:8000/
+
 ## Key assumptions
 * Notifications are only sent when they are due.
 * Daily notifications are sent 24 hours after creation date or the last delivery date.
@@ -32,6 +44,10 @@ handling the queued tasks appropriately.
 * Kubernetes not implemented.
 
 ## Key scalability features
-* The app and celery worker are executed in separate containers to allow scaling of one or another depending on the demand.
+* The web (flask) and celery worker are executed in separate containers for more flexible scalability.
 * The celery beat scheduler works in a separate container.
 * Celery tasks are created for each individual notification sent.
+
+### Issues
+* Tests cannot be run at the moment. To fix this, I need to change the file structure, but I ran out of time for a proper implementation.
+
